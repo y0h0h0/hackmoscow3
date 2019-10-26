@@ -60,17 +60,12 @@
   background: red;
   min-height: 100%;
   position: relative;
-  // background: url('./media/rbg1.jpeg') no-repeat center;
   background: url('./media/stonebg3.jpg') repeat top left;
   background-size: 130px auto;
-  // background-size: cover;
 
   .quest-header {
     position: relative;
     background: rgba(0,0,0,0.2);
-    // background: url('./media/giftbg2.jpg') no-repeat center;
-    // background: url('./media/rbg1.jpeg') no-repeat center bottom;
-    // height: 220px;
     background-size: cover;
     padding-top: 50px;
 
@@ -100,33 +95,23 @@
     .winner {
       text-shadow: 0 0 20px rgba(255,200,0,0.68), 0 0 20px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.8);
       text-align: center;
-      // padding: 5px 10px;
       font-size: 50px;
       color:#ffc000;
-      // animation: jumping 1s linear infinite;
     }
   }
 
 
 
   .quest-task-list {
-    // background: rgba(240,200,250,0.3);
     margin: 10px;
     text-align: center;
 
     .c-task {
       text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.8);
-      // border: 2px solid red;
       margin-top: 20px;
       border-radius: 10px;
       padding: 5px 10px;
       position: relative;
-
-
-
-
-
-
 
       &:nth-of-type(1) {
         margin-top: 0;
@@ -146,18 +131,10 @@
       }
 
       &.done {
-        // background: url('./media/paperbg.png') no-repeat center;
-        // background-size: cover;
         background: #888;
         border: 4px solid rgba(255,255,255,0.6);
         box-shadow: 0 5px 15px rgba(0,0,0,0.7);
-        // box-shadow: 0 10px 25px rgba(0,0,0,0.9);
       }
-
-
-
-
-
 
       .question {
         text-align: left;
@@ -170,17 +147,13 @@
         }
       }
       .description {
-        // background: orange;
         text-align: left;
         font-size: 18px;
         margin-bottom: 10px;
-        // margin: 0 35px;
       }
 
       .c-option-list {
         &:after {content: "";display: table;clear: both;}
-        // background: red;
-
 
         .c-option {
           background: rgba(255,255,255,0.7);
@@ -208,17 +181,9 @@
             background: center no-repeat;
             background-size: cover;
           }
-
-
         }
-
       }
-
-
     }
-
-
-
   }
 
   .c-logout-cntr {

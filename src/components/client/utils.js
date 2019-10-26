@@ -12,10 +12,7 @@ function fadeOut(el, cb) {
 	}, 10);
 }
 
-// styles are in the Layout scss file
-// TO READ - https://www.robinwieruch.de/react-usestate-hook
 const showAlert = (type = 'ok', message = 'message', timing = 3500) => {
-
 	const notts = document.querySelector('.c-notifications');
 	const newMessage = document.createElement('div');
 
@@ -42,13 +39,7 @@ const showAlert = (type = 'ok', message = 'message', timing = 3500) => {
 
 }
 
-/*
 
- USAGE:
-	alert.ok('message', [timing]);
-	alert.warn('message', [timing]);
-	alert.error('message', [timing]);
- */
 export const alert = {
 	ok: (message, timing) => showAlert('ok', message, timing),
 	warn: (message, timing) => showAlert('warn', message, timing),
