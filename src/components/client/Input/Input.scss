@@ -2,68 +2,22 @@
 
 .c-input {
   width: 100%;
-  &.size-small {height: 32px;}
-  &.size-medium {height: 40px;}
 
   &>input {
 		width: 100%;
-    // @include fontFeatureSettings();
-
-    // color:$forecolor_m0_o100;
     outline: none;
     background-repeat: no-repeat;
     line-height: 0;
-    letter-spacing: -0.22px;
-
-    &.kind-default {
-      color:#eee;
-      outline: none;
-      border: 1px solid #ccc;
-      background-color: rgba(0,0,0,0.3);
-      // background-color: $blackcolor_o012;
-      // @include transition(border);
-      // border: 1px solid $blackcolor_o032;
-      // &:hover {border: 1px solid $blackcolor_o088;}
-      // &:focus {border: 1px solid $accentcolor_m50_o100;}
-    }
-
-    &.kind-ghost {
-      border: 0;
-      // background-color: $blackcolor_o012;
-      // @include transition(background-color);
-      // &:focus {background-color: $blackcolor_o032;}
-    }
-
-    &.size-medium {
-      // border-radius: $borderradius;
-      padding: 0 10px;
-      font-size: 15px;
-      font-weight: 400;
-      height: 40px;
-      background-position: 10px center;
-    }
-
-    &.size-small {
-      border-radius: 3px;
-      padding: 0 10px;
-      font-size: 14px;
-      font-weight: 400;
-      height: 32px;
-      background-position: 4px center;
-    }
-
-    &.withIcon {
-      &.size-small {padding-left: 32px; }
-      &.size-medium {padding-left: 40px; }
-    }
-    &.icon-at { background-image: url('/static/ui/icons/at.svg'); }
-    &.icon-lock { background-image: url('/static/ui/icons/lock.svg'); }
-    &.icon-search { background-image: url('/static/ui/icons/search.svg'); }
-
-
-    // &::-webkit-input-placeholder {color: $greycolor;}
-    // &::-moz-placeholder {color: $greycolor;}
-    // &:-ms-input-placeholder {color: $greycolor;}
-    // &:-moz-placeholder {color: $greycolor;}
+    font-size: 36px;
+    height:60px;
+    line-height:70px;
+    border-radius: 20px;
+    padding: 0 10px;
+    text-shadow: 0 2px 2px rgba(0,0,0,0.5);
+    color:#eee;
+    outline: none;
+    border: 4px solid #eee;
+    background-color: rgba(0,0,0,0.5);
+    text-align: center;
   }
 }

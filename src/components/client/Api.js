@@ -23,7 +23,7 @@ export const getQuestBody = ({ key }) => {
               description:`He is the russian president`,
               type:1,
               unlocked:true,
-              done:false
+              done:true
             },
             {
               id:102,
@@ -32,12 +32,12 @@ export const getQuestBody = ({ key }) => {
               description:`He has a long neck`,
               type:2,
               options:[
-                {text:'opt 1',url:'https://yandex.ru/collections/card/59ef471f0c1ed200a800ae63/'},
+                {text:'opt 1',url:'https://avatars.mds.yandex.net/get-pdb/216365/eb43844b-51d6-41a0-86c0-0f3c47da5b48/s1200'},
                 {text:'opt 2',url:'https://4shvostikom.ru/img/derevyannyj-pestryj-bolshoj-zhiraf_0.jpg'},
                 {text:'opt 3',url:'https://img.youtube.com/vi/xs2Us3L_s-k/0.jpg'},
                 {text:'opt 4',url:'https://img3.goodfon.ru/original/320x240/a/9b/glaza-zhivotnye-zelenyy-lyagushka.jpg'},
               ],
-              unlocked:false,
+              unlocked:true,
               done:false
             },
             {

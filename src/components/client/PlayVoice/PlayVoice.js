@@ -1,4 +1,5 @@
 import React from 'react';
+import './PlayVoice.scss';
 
 const PlayVoice = ({ onClick, text, className, disabled /* type, disabled, linkurl, onClick, text, className, tabIndex, minwidth, size = 'medium', icon = '' */ }) => {
 
@@ -6,11 +7,8 @@ const PlayVoice = ({ onClick, text, className, disabled /* type, disabled, linku
 
   if(disabled) classes.push('disabled');
 
-  return <div onClick={onClick} className={`PlayVoice ${classes}`}>
-            {text}
-          </div>;
-
+  return <div onClick={onClick} className={`PlayVoice ${classes}`} />
 
 }
 
-export default Button;
+export default PlayVoice;

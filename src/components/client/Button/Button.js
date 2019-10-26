@@ -1,7 +1,5 @@
-// import 'Button.scss';
-
-// import { Link } from 'routes';
 import React from 'react';
+import './Button.scss';
 
 const Button = ({ type, disabled, linkurl, onClick, text, className, tabIndex, minwidth, size = 'medium', icon = '' }) => {
 
@@ -18,9 +16,19 @@ const Button = ({ type, disabled, linkurl, onClick, text, className, tabIndex, m
   if(size) classes.push(`size_${size}`);
 
 
-  return <button onClick={onClick} className={`button ${classes.join(' ')}`} style={{minWidth:minwidth||null}} tabIndex={tabIndex} >
-            {text}
-          </button>;
+  return <div className="c-grButton" onClick={onClick}>
+    <div/>
+    <div>{text}</div>
+    <div/>
+  </div>
+
+  //
+  // button
+  //
+  //
+  // return <button onClick={onClick} className={`button ${classes.join(' ')}`} style={{minWidth:minwidth||null}} tabIndex={tabIndex} >
+  //           {text}
+  //         </button>;
 
 
 }

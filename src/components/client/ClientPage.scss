@@ -1,22 +1,42 @@
 
 .c-screenLocker {
-  background: orange;
-  border: 4px dashed red;
   position: absolute;
   top:0;
   left:0;
   right:0;
   bottom:0;
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index: 1111111;
+  background: url('./media/elisa.jpg') center no-repeat;
+  background-size: cover;
+  text-align: center;
+  padding-top: 400px;
+  text-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.8);
+  background-position: -110px 0;
+  padding: 340px 20px 0;
+  &>.title {
+    font-size: 26px;
+  }
 }
 
-.loading-screen {
+.c-loading-screen {
   background: green;
-  border: 4px dashed red;
   position: absolute;
   top:0;
   left:0;
   right:0;
   bottom:0;
+  z-index: 1111111;
+  background: url('./media/elisa.jpg') center no-repeat;
+  background-size: cover;
+  text-align: center;
+  padding-top: 400px;
+  text-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.8);
+  background-position: -110px 0;
 }
 
 
@@ -31,4 +51,178 @@
   opacity: 0.7;
   &:hover {opacity: 1;}
   cursor: pointer;
+}
+
+.c-distance-10 {height:10px;}
+.c-distance-20 {height:20px;}
+
+.quest-body {
+  background: red;
+  min-height: 100%;
+  position: relative;
+  // background: url('./media/rbg1.jpeg') no-repeat center;
+  background: url('./media/stonebg3.jpg') repeat top left;
+  background-size: 130px auto;
+  // background-size: cover;
+
+  .quest-header {
+    position: relative;
+    background: rgba(0,0,0,0.2);
+    // background: url('./media/giftbg2.jpg') no-repeat center;
+    // background: url('./media/rbg1.jpeg') no-repeat center bottom;
+    // height: 220px;
+    background-size: cover;
+    padding-top: 50px;
+
+    .gift-photo {
+      width:250px;
+      height:180px;
+      margin: 0px auto 0;
+      background: center no-repeat;
+      background-size: contain;
+    }
+
+    .gift-description {
+      text-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.8);
+      text-align: center;
+      padding: 5px 10px;
+    }
+
+
+    @keyframes jumping {
+      0% {transform: translateY(-0px);}
+      30% {transform: translateY(-32px);}
+      50% {transform: translateY(-40px);}
+      70% {transform: translateY(-32px);}
+      100% {transform: translateY(-0px);}
+    }
+
+    .winner {
+      text-shadow: 0 0 20px rgba(255,200,0,0.68), 0 0 20px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.8);
+      text-align: center;
+      // padding: 5px 10px;
+      font-size: 50px;
+      color:#ffc000;
+      // animation: jumping 1s linear infinite;
+    }
+  }
+
+
+
+  .quest-task-list {
+    // background: rgba(240,200,250,0.3);
+    margin: 10px;
+    text-align: center;
+
+    .c-task {
+      text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.8);
+      // border: 2px solid red;
+      margin-top: 20px;
+      border-radius: 10px;
+      padding: 5px 10px;
+      position: relative;
+
+
+
+
+
+
+
+      &:nth-of-type(1) {
+        margin-top: 0;
+      }
+
+      &.locked {
+        background: url('./media/metalbg.jpg') repeat top left;
+        background-size: 100px;
+        border: 4px solid rgba(0,0,0,0.7);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+      }
+
+      &.active {
+        background: url('./media/paperbg.png') no-repeat center;
+        background-size: cover;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+      }
+
+      &.done {
+        // background: url('./media/paperbg.png') no-repeat center;
+        // background-size: cover;
+        background: #888;
+        border: 4px solid rgba(255,255,255,0.6);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.7);
+        // box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+      }
+
+
+
+
+
+
+      .question {
+        text-align: left;
+        font-size: 25px;
+
+        .voicer {
+          width: 40px;
+          height: 40px;
+          float: right;
+        }
+      }
+      .description {
+        // background: orange;
+        text-align: left;
+        font-size: 18px;
+        margin-bottom: 10px;
+        // margin: 0 35px;
+      }
+
+      .c-option-list {
+        &:after {content: "";display: table;clear: both;}
+        // background: red;
+
+
+        .c-option {
+          background: rgba(255,255,255,0.7);
+          &:hover {
+            background: #eee;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+          }
+          cursor: pointer;
+          width:calc(50% - 5px);
+          float:left;
+          padding: 5px;
+          margin-bottom: 10px;
+          border-radius: 5px;
+
+
+          &:nth-of-type(odd) {
+            margin-right: 10px;
+            clear:both;
+          }
+
+          .opt-pic {
+            margin: 0 auto;
+            width:110px;
+            height:110px;
+            background: center no-repeat;
+            background-size: cover;
+          }
+
+
+        }
+
+      }
+
+
+    }
+
+
+
+  }
+
+  .c-logout-cntr {
+    padding: 30px 10px 20px;
+  }
+
 }
