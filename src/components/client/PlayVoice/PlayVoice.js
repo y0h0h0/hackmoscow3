@@ -1,7 +1,7 @@
 import React from 'react';
 import './PlayVoice.scss';
 
-const PlayVoice = ({ onClick, text, className, disabled /* type, disabled, linkurl, onClick, text, className, tabIndex, minwidth, size = 'medium', icon = '' */ }) => {
+const PlayVoice = ({ onClick, text, className, disabled}) => {
 
   let classes = [className||''];
 

@@ -5,6 +5,7 @@ import Button from 'components/client/Button/Button';
 import PlayVoice from 'components/client/PlayVoice/PlayVoice';
 import { alert, speak } from 'components/client/utils';
 import * as Api from 'components/client/Api';
+import * as questApi from 'api/quests';
 
 import 'components/client/ClientPage.scss';
 
@@ -19,24 +20,14 @@ export default () => {
   useEffect(() => {
     initialStart();
     // updateQuestBody();
-    // eslint-disable-next-line
   },[])
-
-
-  // localStorage.getItem('test')
-
-
 
 
 
   const initialStart = async () => {
-
-    // localStorage.setItem('', 1);
     const questKey = localStorage.getItem('hm3_questKey');
-    console.log('initialStart', questKey);
 
     const res = await Api.getQuestBody({key:questKey});
-    console.log(res);
 
     setIsReady(true);
     if(res.error) return handleLogout();
@@ -47,19 +38,34 @@ export default () => {
   }
 
   const handleLogin = async () => {
-    console.log('googgo', questKey)
 
-    const res = await Api.getQuestBody({key:questKey});
-    console.log(res);
-    if(res.error) {
+    const res = await
+    questApi.getQuests({passphrase:questKey}).then(data => {
+
+        console.warn(data);
+
+        // localStorage.setItem('hm3_questKey', questKey);
+        // setScreenLocker(false)
+        // setQuestKey(questKey)
+        // setQuestBody(res.result)
+
+    }).catch(error => {
+
       speak('Wrong key. Try again.')
-      return alert.error('Wrong key. Try again.',100000)
-    }
+      alert.error('Wrong key. Try again.')
 
-    localStorage.setItem('hm3_questKey', questKey);
-    setScreenLocker(false)
-    setQuestKey(questKey)
-    setQuestBody(res.result)
+    })
+
+
+
+
+    // const res = await Api.getQuestBody({key:questKey});
+    // if(res.error) {
+    //   speak('Wrong key. Try again.')
+    //   return alert.error('Wrong key. Try again.')
+    // }
+
+
   }
 
   const handleLogout = async () => {
@@ -67,14 +73,8 @@ export default () => {
     setScreenLocker(true);
     setQuestKey('');
     setQuestBody(null);
-    console.log('logged out');
   }
 
-
-  // const updateQuestBody = async () => {
-  //   const res = await Api.getQuestBody('olala');
-  //   console.log(res)
-  // }
 
   const handleAnswer = async (task_id, answer) => {
     console.log('ANSWER TO ', task_id, ' === ', answer)
@@ -83,16 +83,6 @@ export default () => {
   const handleStartQuest = async () => {
     console.log('handleStartQuest ', handleStartQuest)
   }
-
-
-  // const renderScreenLocker = () => {
-  //   if(!screenLocker) return null;
-  //   return <div className="c-screenLocker">
-  //     Enter your key:
-  //     <Input value={questKey} onChange={setQuestKey} />
-  //     <Button onClick={handleLogin} text="Login" />
-  //   </div>
-  // }
 
 
   return (
@@ -129,11 +119,11 @@ const Quest = (props) => {
   const isQuestFinished = rTasks.every(task => task.done)
   const activeTask = rTasks.find(task => task.unlocked && !task.done);
 
-  console.warn('-----')
-  console.warn('- activeTask', activeTask)
-  console.warn('- isQuestStarted', isQuestStarted)
-  console.warn('- isQuestFinished', isQuestFinished)
-  console.warn('-----')
+  // console.warn('-----')
+  // console.warn('- activeTask', activeTask)
+  // console.warn('- isQuestStarted', isQuestStarted)
+  // console.warn('- isQuestFinished', isQuestFinished)
+  // console.warn('-----')
 
   return <div className="quest-body">
 
