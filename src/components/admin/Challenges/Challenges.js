@@ -1,6 +1,6 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
-import { getQuests } from 'api/quests';
+import { getQuests, deleteQuest } from 'api/quests';
 
 import { AppContext } from 'containers/admin/Layout';
 
@@ -13,35 +13,57 @@ import ChallengeItem from './ChallengeItem';
 export default (props) => {
   const {
     challenges,
-    setDraftChallenge,
+    setState,
   } = useContext(AppContext);
 
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    getQuests().then((result) => {
-      console.log(result)
+    setLoading(true);
+    getQuests().then((challenges) => {
+      setLoading(false);
+      setState({ challenges });
+    }).catch(() => {
+      setLoading(false);
+      setState({ challenges: null });
     });
+    // eslint-disable-next-line
   }, []);
+
+  const removeChallenge = (item) => {
+    setLoading(true);
+    deleteQuest(item).then(() => {
+      setLoading(false);
+      const newChallenges = [...challenges];
+      setState({
+        challenges: newChallenges.filter(({ id }) => id !== item.id)
+      });
+    }).catch(() => {
+      setLoading(false);
+    });
+  }
 
   return (
     <>
       <Button
-        onClick={() => setDraftChallenge({}, true)}
+        onClick={() => setState({
+          updatedChallengeId: 0,
+        })}
         variant={'success'}
         size={'large'}
+        disabled={loading}
         fullWidth
         strict
-      >+ Challenge</Button>
+      >+ Quest</Button>
 
-      {challenges && (
-        <div className="Challenges">
-          {challenges.map((item, index) => (
-            <ChallengeItem
-              key={item.id}
-              item={item}
-            />
-          ))}
-        </div>
-      )}
+      <div className="Challenges" data-loading={loading ? 'Please, wait...' : null}>
+        {challenges && challenges.map((item, index) => (
+          <ChallengeItem
+            key={item.id + '' + index}
+            item={item}
+            removeChallenge={removeChallenge}
+          />
+        ))}
+      </div>
     </>
   );
 }

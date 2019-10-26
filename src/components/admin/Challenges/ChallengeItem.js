@@ -6,16 +6,18 @@ import { Button } from 'ui/admin';
 
 export default (props) => {
   const {
-    removeChallenge,
-    setDraftChallenge,
+    setState,
   } = useContext(AppContext);
 
   const {
     item,
+    removeChallenge,
   } = props;
 
   return (
-    <div className="ChallengeItem" onClick={() => setDraftChallenge(item, true)}>
+    <div className="ChallengeItem" onClick={() => setState({
+      updatedChallengeId: item.id,
+    })}>
       <span className="ChallengeItem__text">
         {item.name}
       </span>
@@ -24,7 +26,9 @@ export default (props) => {
           onClick={(e) => {
             e.stopPropagation();
             removeChallenge(item);
-            setDraftChallenge(null, true);
+            setState({
+              updatedChallengeId: null,
+            });
           }}
           strict
         >&times;</Button>

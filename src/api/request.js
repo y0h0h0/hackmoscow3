@@ -3,15 +3,44 @@ export default ({
   method,
   url,
 }) => {
-  return fetch(url, {
+  for (let key in data) {
+    if (data[key] === null) {
+      delete data[key];
+    } 
+  }
+  const options = {
     method,
     headers: {
       'Content-Type': 'application/json;charset=utf-8'
     },
     body: JSON.stringify(data),
-  }).then((response) =>
-    response.json()
-  ).catch((response) => {
+  };
+  // switch (method) {
+  //   case 'POST':
+  //     const fd = new FormData();
+  //     for (let key in data) {
+  //       fd.append(key, data[key]);
+  //     }
+  //     if (data && Object.keys(data).length) {
+  //       Object.assign(options, {
+  //         body: fd,
+  //       });
+  //     }
+  //     break;
+  //   case 'GET':
+  //     if (data && Object.keys(data).length) {
+  //       const fd = [];
+  //       for (let key in data) {
+  //         fd.push(`${key}=${data[key]}`);
+  //       }
+  //       url += '?' + fd.join('&');
+  //     }
+  //     break;
+  //   default:
+  // }
+  return fetch(url, options).then((response) => {
+    return response.json();
+  }).catch((response) => {
     console.error(response);
   });
 }

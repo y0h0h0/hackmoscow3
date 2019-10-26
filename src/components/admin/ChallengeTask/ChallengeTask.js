@@ -14,12 +14,12 @@ export default (props) => {
     {
       title: 'Text answer',
       type: 1,
-      checked: !task || !task.type || task.type === 1,
+      checked: !task || !task.type || parseInt(task.type) === 1,
     },
     {
       title: 'Variants' + (task && task.options ? ` (${task.options.length})` : ''),
       type: 2,
-      checked: task && task.type === 2,
+      checked: task && parseInt(task.type) === 2,
     },
   ];
 
@@ -96,7 +96,7 @@ export default (props) => {
                 <input
                   className="form-control form-control-sm"
                   placeholder="Answer"
-                  value={task.answer}
+                  value={task.answer || ''}
                   onChange={({ target }) => saveTask({
                     ...task,
                     answer: target.value,
