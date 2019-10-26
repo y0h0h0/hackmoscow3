@@ -3,3 +3,4 @@ PyYAML>=5.1
 dnspython>=1.16
 flask-login>=0.4
 Werkzeug>=0.16
+wtforms>=2.2

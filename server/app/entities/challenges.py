@@ -1,26 +1,48 @@
+import json
 from bson.objectid import ObjectId
+
+from entities.tasks import Task, Path
 
 
 class Challenge:
-    def __init__(self, path, student, teacher, done=False, meta=None, _id=None):
+    def __init__(self, path, passphrase, done=None, unlocked=None, meta=None, _id=None):
         self.path = path
-        self.student = student
-        self.teacher = teacher
-        self.done = done
+        self.passphrase = passphrase
+        self.done = done or []
+        self.unlocked = unlocked or []
         self.meta = meta or {}
         self._id = _id
 
     def view(self):
-        return {'path': str(self.path), 'student': self.student, 'teacher': self.teacher, 'done': self.done,
-                'meta': self.meta, '_id': str(self._id)}
+        return {'path': str(self.path), 'passphrase': self.passphrase, 'done': self.done, 'unlocked': self.unlocked,
+                'id': str(self._id), **self.meta}
 
     @staticmethod
-    def get_by_id(obj_id, db):
-        res = db.challenges.find_one({'_id': ObjectId(obj_id)})
-        if not res:
+    def get_by_id(obj_id, db, with_tasks=False):
+        ch = db.challenges.find_one({'_id': ObjectId(obj_id)})
+        if not ch:
             return None
         else:
-            return Challenge(**res)
+            ch = Challenge(**ch)
+        if not with_tasks:
+            return ch
+
+        path = Path.get_by_id(ch.path, db, with_tasks=True)
+        if not path:
+            raise Exception(f'Challenge {str(ch._id)} doesn\'t have a path (missing {ch.path})')
+        meta = json.loads(ch.meta) if isinstance(ch.meta, str) else ch.meta
+        tasks = [Task(**t).view() for t in path.tasks]
+        for t in tasks:
+            t['done'] = t['id'] in ch.done
+            t['unlocked'] = t['id'] in ch.unlocked
+        res = {
+            'id': str(ch._id),
+            'name': path.name,
+            'gift_description': meta.get('gift_description'),
+            'gift_photo': meta.get('gift_photo'),
+            'tasks': tasks
+        }
+        return res
 
     @staticmethod
     def get_by_criteria(criteria, db):
@@ -29,5 +51,8 @@ class Challenge:
 
     def upload(self, db):
         res = db.challenges.insert_one({
-            'path': self.path, 'student': self.student, 'teacher': self.teacher, 'done': self.done, 'meta': self.meta})
+            'path': self.path, 'passphrase': self.passphrase, 'done': self.done, 'meta': self.meta})
         self._id = res.inserted_id
+
+    def update(self, db, field):
+        db.challenges.update_one({'_id': self._id}, {'$set': {field: self.__dict__[field]}})

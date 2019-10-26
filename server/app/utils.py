@@ -17,3 +17,14 @@ def get_config(path=keychain_path):
 
 def is_safe_for_upload(filename):
     return any(filename.endswith(ext) for ext in get_config(config_path)['allowed_extensions'])
+
+
+def extract_args(args, keys):
+    meta = {}
+    res = [None for _ in range(len(keys))] + [meta]
+    for k, v in args.items():
+        if k in keys:
+            res[keys.index(k)] = v
+        else:
+            meta[k] = v
+    return res
