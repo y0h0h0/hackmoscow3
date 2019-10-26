@@ -56,13 +56,15 @@ export default (props) => {
       >+ Quest</Button>
 
       <div className="Challenges" data-loading={loading ? 'Please, wait...' : null}>
-        {challenges && challenges.map((item, index) => (
-          <ChallengeItem
-            key={item.id + '' + index}
-            item={item}
-            removeChallenge={removeChallenge}
-          />
-        ))}
+        {challenges && challenges.map((item, index) => {
+          return (
+            <ChallengeItem
+              key={index}
+              item={item}
+              removeChallenge={removeChallenge}
+            />
+          );
+        })}
       </div>
     </>
   );

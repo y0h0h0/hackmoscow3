@@ -39,11 +39,13 @@ export default (props) => {
         )
         : (
           <div className="ChallengeTask__body">
-            <button
-              className="ChallengeTask__close"
-              type="button"
-              onClick={() => removeTask(task)}
-            >&times;</button>
+            {!Boolean(task.id) && (
+              <button
+                className="ChallengeTask__close"
+                type="button"
+                onClick={() => removeTask(task)}
+              >&times;</button>
+            )}
             <div className="ChallengeTask__index">
               {task.index}
             </div>
@@ -56,6 +58,7 @@ export default (props) => {
                   ...task,
                   question: target.value,
                 })}
+                disabled={Boolean(task.id)}
               />
             </div>
             <div className="ChallengeTask__section">
@@ -67,50 +70,56 @@ export default (props) => {
                   ...task,
                   description: target.value,
                 })}
+                disabled={Boolean(task.id)}
               />
             </div>
-            <div className="ChallengeTask__section">
-              <div className="btn-group  btn-block btn-group-toggle">
-                {taskTypeOptions.map((item, index) => (
-                  <label
-                    key={index}
-                    className={"btn btn-sm btn-secondary" + (item.checked ? ' active' : '')}
-                  >
+
+            {!Boolean(task.id) && (
+              <>
+                <div className="ChallengeTask__section">
+                  <div className="btn-group  btn-block btn-group-toggle">
+                    {taskTypeOptions.map((item, index) => (
+                      <label
+                        key={index}
+                        className={"btn btn-sm btn-secondary" + (item.checked ? ' active' : '')}
+                      >
+                        <input
+                          type="radio"
+                          name="options"
+                          autoComplete="off"
+                          checked={item.checked}
+                          onChange={({ target }) => target.checked && saveTask({
+                            ...task,
+                            type: item.type,
+                          })}
+                        />
+                        {item.title}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="ChallengeTask__section">
+                  {taskTypeOptions[0].checked && (
                     <input
-                      type="radio"
-                      name="options"
-                      autoComplete="off"
-                      checked={item.checked}
-                      onChange={({ target }) => target.checked && saveTask({
+                      className="form-control form-control-sm"
+                      placeholder="Answer"
+                      value={task.answer || ''}
+                      onChange={({ target }) => saveTask({
                         ...task,
-                        type: item.type,
+                        answer: target.value,
                       })}
                     />
-                    {item.title}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div className="ChallengeTask__section">
-              {taskTypeOptions[0].checked && (
-                <input
-                  className="form-control form-control-sm"
-                  placeholder="Answer"
-                  value={task.answer || ''}
-                  onChange={({ target }) => saveTask({
-                    ...task,
-                    answer: target.value,
-                  })}
-                />
-              )}
-              {taskTypeOptions[1].checked && (
-                <ChallengeTaskVariants
-                  task={task}
-                  saveTask={saveTask}
-                  setCorrectedOption={setCorrectedOption}
-                />
-              )}
-            </div>
+                  )}
+                  {taskTypeOptions[1].checked && (
+                    <ChallengeTaskVariants
+                      task={task}
+                      saveTask={saveTask}
+                      setCorrectedOption={setCorrectedOption}
+                    />
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )
       }

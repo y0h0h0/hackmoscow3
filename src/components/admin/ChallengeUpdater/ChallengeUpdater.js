@@ -78,7 +78,10 @@ export default () => {
         setLoading(false);
         setInitialChallenge(result);
         setDraftChallenge({ ...result, force: true });
-        setTasks(result.tasks);
+        setTasks(result.tasks.map((task) => ({
+          ...task,
+          key: Math.random(),
+        })));
       }).catch(() => {
         setLoading(false);
         setState({ updatedChallengeId: null });
@@ -90,7 +93,7 @@ export default () => {
   }, [updatedChallengeId]);
 
   const saveChallenge = () => {
-    let newChallenges = [...challenges];
+    let newChallenges = [...(challenges || [])];
     const newChallenge = {
       ...draftChallenge,
       tasks: tasks.map(({ id, ...task }) => task),
@@ -132,7 +135,7 @@ export default () => {
       });
     }
     setState({
-      challenges: newChallenges,
+      challenges: newChallenges.map((item) => ({ ...item })),
     });
   }
   // useEffect(() => {
@@ -142,14 +145,14 @@ export default () => {
   // }, [draftChallenge]);
 
   const saveTask = (state) => {
-    if (state.id) {
+    if (state.key) {
       setTasks(tasks.map((task) =>
-        task.id === state.id ? { ...state } : task)
+        task.key === state.key ? { ...state } : task)
       );
     } else {
       const newTasks = [...tasks];
-      state.id = Math.random();
-      state.index = newTasks.length + 1;
+      state.key = Math.random();
+      // state.index = newTasks.length + 1;
       newTasks.push({ ...state });
       setTasks(newTasks);
     }
@@ -224,7 +227,7 @@ export default () => {
         <div className="row">
           {tasks && tasks.map((task, index) => {
             return (
-              <div key={task.id} className="col-4">
+              <div key={task.key} className="col-4">
                 <ChallengeTask
                   task={task}
                   saveTask={saveTask}
