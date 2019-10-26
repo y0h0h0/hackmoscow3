@@ -1,0 +1,22 @@
+.Constructor {
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto 250px 1fr;
+  grid-template-rows: auto 1fr;
+
+  &__block1 {
+    grid-column: 1 / 4;
+  }
+
+  &__block2 {
+    grid-row: 2 / 3;
+  }
+
+  &__block3 {
+    grid-row: 2 / 3;
+  }
+
+  &__block4 {
+    grid-row: 2 / 3;
+  }
+}

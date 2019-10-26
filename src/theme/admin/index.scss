@@ -1,0 +1,19 @@
+@import '../../vendors/bootstrap-4.3.1-dist/css/bootstrap.css';
+@import '../../vendors/font.awesome/5.9.0/css/all.css';
+
+@import './variables';
+
+@import './components/App';
+@import './components/Breadcrumbs';
+@import './components/Button';
+@import './components/ChallengeItem';
+@import './components/Challenges';
+@import './components/ChallengeTask';
+@import './components/ChallengeUpdater';
+@import './components/Constructor';
+@import './components/Layout';
+@import './components/Navbar';
+@import './components/Sidebar';
+@import './components/SidebarSection';
+@import './components/VerticalMenu';
+@import './components/Workarea';

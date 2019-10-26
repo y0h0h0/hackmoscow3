@@ -1,0 +1,29 @@
+.row {
+  margin-left: -8px;
+  margin-right: -8px;
+
+  > [class*="col-"] {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  &--sm {
+    margin-left: -4px;
+    margin-right: -4px;
+
+    > [class*="col-"] {
+      padding-right: 4px;
+      padding-left: 4px;
+    }
+  }
+}
+
+.Layout {
+  width: 100vw;
+  height: 100vh;
+  min-width: 1120px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: $color-bg-base;
+  color: #333;
+}

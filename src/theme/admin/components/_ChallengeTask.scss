@@ -1,0 +1,57 @@
+.ChallengeTask {
+  position: relative;
+  margin-bottom: 1rem;
+  height: calc(100% - 1rem);
+
+  &:hover .ChallengeTask__close {
+    opacity: 1;
+  }
+
+  &__index {
+    font-size: 24px;
+    text-align: center;
+    line-height: 32px;
+  }
+
+  &__body {
+    border: 1px solid $color-border-base;
+    border-radius: 4px;
+    padding: 8px;
+    background: #FFF;
+  }
+
+  &__add {
+    border: 1px dashed $color-border-base;
+    font-size: 64px;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  &__close {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: none;
+    border: none;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    color: #FFF;
+    background: var(--danger);
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0;
+    transition: .15s;
+  }
+
+  &__section {
+    margin-bottom: 8px;
+  }
+}

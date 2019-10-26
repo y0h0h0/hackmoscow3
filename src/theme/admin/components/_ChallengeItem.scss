@@ -1,0 +1,21 @@
+.ChallengeItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-left: 4px solid $color-challenge;
+  cursor: pointer;
+
+  + .ChallengeItem {
+    border-top: 1px solid $color-border-base;
+  }
+
+  &__text {
+    flex-grow: 1;
+    font-size: 16px;
+  }
+
+  &__btn {
+    margin: -8px;
+  }
+}
