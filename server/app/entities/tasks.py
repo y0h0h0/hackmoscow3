@@ -2,9 +2,10 @@ from bson.objectid import ObjectId
 
 
 class Task:
-    def __init__(self, question, meta=None, _id=None):
+    def __init__(self, question, meta=None, _id=None, **kw):
         self.question = question
         self.meta = meta or {}
+        self.meta.update(kw)
         self._id = _id
 
     @staticmethod
@@ -22,6 +23,10 @@ class Task:
         res = db.tasks.insert_one({'question': self.question, 'meta': self.meta})
         self._id = res.inserted_id
         return self._id
+
+    @staticmethod
+    def upload_many(tasks, db):
+        return db.tasks.insert_many([{'question': t.question, 'meta': t.meta} for t in tasks]).inserted_ids
 
 
 class Path:
@@ -73,3 +78,21 @@ class Path:
         self.tasks.append(task._id)
         db.paths.update_one({'_id': self._id}, {'$set': {'tasks': self.tasks}})
         return task._id
+
+    def update_tasks(self, tasks, db):
+        print('Updating tasks:', tasks)
+        if len(tasks) == 0:
+            self.tasks = []
+        if all(isinstance(t, dict) for t in tasks):
+            print('New tasks, uploading them')
+            task_ids = Task.upload_many([Task(**t) for t in tasks], db)
+            print('Got task ids:', task_ids)
+            self.tasks = [ObjectId(t) if isinstance(t, str) else t for t in task_ids]
+        elif all(isinstance(t, str) for t in tasks):
+            self.tasks = [ObjectId(t) for t in tasks]
+        elif all(isinstance(t, ObjectId) for t in tasks):
+            self.tasks = tasks
+        else:
+            raise Exception('Inconsistent tasks')
+
+        db.paths.update_one({'_id': self._id}, {"$set": {'tasks': self.tasks}})

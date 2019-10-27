@@ -1,3 +1,5 @@
+import json
+from json import JSONDecodeError
 import os
 
 from bson.objectid import ObjectId
@@ -42,7 +44,8 @@ def task_find(obj_id):
 
 @app.route("/task/create", methods=["POST"])
 def add_task():
-    question, challenge, path, meta = utils.extract_args(request.args, ('question', 'challenge', 'path'))
+    args = request.json if request.json else request.args
+    question, challenge, path, meta = utils.extract_args(args, ('question', 'challenge', 'path'))
 
     if challenge:
         path = challenges.Challenge.get_by_id(challenge, db_conn).path
@@ -51,7 +54,7 @@ def add_task():
     path = tasks.Path.get_by_id(path, db_conn)
     task = tasks.Task(question=question, meta=meta)
     path.add_task(task, db_conn)
-    return str(task._id)
+    return jsonify(task.view())
 
 
 @app.route("/paths")
@@ -60,12 +63,13 @@ def paths_all():
 
 @app.route("/path/create", methods=["POST"])
 def add_path():
-    name = request.args.get('name')
-    meta = request.args.get('meta')
+    args = request.json if request.json else request.args
+    name = args.get('name')
+    meta = args.get('meta')
 
     path = tasks.Path(name=name, meta=meta)
     path.upload(db_conn)
-    return str(path._id)
+    return jsonify(path.view())
 
 @app.route("/path/<obj_id>")
 def path_find(obj_id):
@@ -82,17 +86,18 @@ def path_del(obj_id):
         abort(400, f'There still exist challenges: {[str(c._id) for c in cascade]}')
     res = db_conn.paths.delete_one({'_id': ObjectId(obj_id)})
     if res.deleted_count:
-        return 'deleted'
+        return jsonify('deleted')
     else:
         return abort(404)
 
 @app.route("/challenge/create", methods=["POST"])
 def add_challenge():
-    path, passphrase, meta = utils.extract_args(request.args, ('path', 'passphrase'))
+    args = request.json if request.json else request.args
+    path, passphrase, meta = utils.extract_args(args, ('path', 'passphrase'))
 
     ch = challenges.Challenge(path=ObjectId(path), meta=meta, passphrase=passphrase)
     ch.upload(db_conn)
-    return str(ch._id)
+    return jsonify(ch.view())
 
 @app.route("/challenge/<obj_id>")
 def challenge_find(obj_id):
@@ -106,9 +111,82 @@ def challenge_find(obj_id):
 def challenge_del(obj_id):
     res = db_conn.challenges.delete_one({'_id': ObjectId(obj_id)})
     if res.deleted_count:
-        return 'deleted'
+        return jsonify('deleted')
     else:
         return abort(404)
+
+@app.route("/quest/<obj_id>", methods=['PATCH'])
+def challenge_update(obj_id):
+    args = {}
+    args.update(request.get_json())
+    args.update(request.args)
+
+    tasks = args.pop('tasks') if 'tasks' in args else None
+
+
+    print('Tasks:', tasks, 'Args:', args)
+    ch = challenges.Challenge.get_by_id(obj_id, db_conn)
+    if not ch:
+        abort(404, 'Challenge not found')
+
+    if not tasks or not args:
+        return jsonify(ch.view())
+
+    if tasks is not None:
+        path = Path.get_by_id(ch.path, db_conn)
+        path.update_tasks(tasks, db_conn)
+
+            # print('Batch upload')
+            # if task_list:
+            #     tasks = []
+            #     for t in task_list:
+            #         params = t.copy()
+            #         question = params.pop('question')
+            #         tasks.append(Task(question, meta=params))
+            #     # ch.tasks = Task.upload_many(tasks, db_conn)
+            # else:
+            #     # ch.tasks = []
+            #     ""
+
+    flat_args, meta_args, rest_args, changed_args = [], [], [], []
+    print('To update:', list(args))
+    for k, v in args.items():
+        if v is None:
+            continue
+        if k == 'id' or k == '_id':
+            abort(400, 'you can\'t just change id')
+        elif k in ('done', 'unlocked'):
+            try:
+                print('Danger zone with k:', v)
+                task_list = json.loads(v) if isinstance(v, str) else v
+                if isinstance(task_list, str):
+                    raise Exception(f'Tried to change {k}, but unparsed param as string: {v}')
+                if not isinstance(task_list, list):
+                    raise Exception(f'Expected list for {k}, parsed value as {v}')
+
+                if any(not isinstance(t, str) for t in task_list):
+                    raise ValueError
+                else:
+                    ch.__dict__[k] = [ObjectId(t) for t in task_list]
+                    changed_args.append(k)
+            except JSONDecodeError or ValueError:
+                abort(400, f'Updating {k} failed. It should be passed as follows: "[task_1_id, ...]"')
+
+        if k in challenges.Challenge.arg_names:
+            flat_args.append((k, v))
+            changed_args.append(k)
+        else:
+            meta_args.append((k, v))
+            if 'meta' not in changed_args:
+                changed_args.append('meta')
+    for k, v in flat_args:
+        ch.__dict__[k] = v
+    meta = ch.meta if isinstance(ch.meta, dict) else json.loads(ch.meta)
+    for k, v in meta_args:
+        meta[k] = v
+    ch.meta = meta
+    ch.update(db_conn, changed_args)
+    return jsonify(challenges.Challenge.get_by_id(obj_id, db_conn).view())
 
 @app.route("/quest/<obj_id>")
 def quest_find(obj_id):
@@ -120,14 +198,15 @@ def quest_find(obj_id):
 
 @app.route("/quest/create", methods=["POST"])
 def add_quest():
-    path_name, passphrase, meta = utils.extract_args(request.args, ('name', 'passphrase'))
+    args = request.json if request.json else request.args
+    path_name, passphrase, meta = utils.extract_args(args, ('name', 'passphrase'))
     path = Path(name=path_name)
     path.upload(db_conn)
 
     meta['name'] = path_name
     ch = challenges.Challenge(path=path._id, meta=meta, passphrase=passphrase)
     ch.upload(db_conn)
-    return str(ch._id)
+    return jsonify(ch.view())
 
 @app.route("/quests")
 def challenge_list():
@@ -136,10 +215,11 @@ def challenge_list():
     return jsonify([ch.view() for ch in res])
 
 
-@app.route("/challenge/<obj_id>/check", methods=["POST"])
+@app.route("/quest/<obj_id>/check", methods=["POST"])
 def check_answer(obj_id):
+    args = request.json if request.json else request.args
     required_params = ('task_id', 'answer')
-    task_id, answer, meta = utils.extract_args(request.args, required_params)
+    task_id, answer, meta = utils.extract_args(args, required_params)
 
     if any(p is None for p in (task_id, answer)):
         abort(400, f"Missing one of the required parameters: {required_params}")
@@ -148,19 +228,69 @@ def check_answer(obj_id):
     if not ch:
         abort(404, 'Challenge not found')
 
-    task = next((t for t in ch['tasks'] if t['id'] == task_id), None)
+    tasks_iter = iter(ch['tasks'])
+    task = next((t for t in tasks_iter if t['id'] == task_id), None)
     if task is None:
         abort(404, 'Task not found in this challenge')
 
+    if task_id not in ch['unlocked']:
+        abort(400, 'Task is locked yet')
     correct_answer = task.get('answer') or task.get('correct_option')
-    success = correct_answer == str(answer)
+    success = str(correct_answer) == str(answer)
     if success:
         ch = challenges.Challenge.get_by_id(obj_id, db_conn)
         if task['id'] not in ch.done:
             ch.done.append(task['id'])
-            ch.update(db_conn, 'done')
+            ch.update(db_conn, ['done'])
+        next_task = next(tasks_iter, None)
+        if next_task is not None:
+            ch.unlocked.append(next_task['id'])
+            ch.update(db_conn, ['unlocked'])
 
     return jsonify(success)
+
+
+@app.route("/quest/<obj_id>/start", methods=["POST"])
+def open_answer(obj_id):
+    args = request.json if request.json else request.args
+    task_id = args.get('task_id')
+
+    ch = challenges.Challenge.get_by_id(obj_id, db_conn, with_tasks=True)
+    if not ch:
+        abort(404, 'Quest not found')
+    tasks = ch.get('tasks')
+    if not tasks:
+        return jsonify('No tasks actually')
+
+    ch = challenges.Challenge.get_by_id(obj_id, db_conn)
+    ch.unlocked = [tasks[0]['id']]
+    ch.update(db_conn, ['unlocked'])
+    return jsonify(ch.view())
+
+    #
+    # if any(p is None for p in (task_id, answer)):
+    #     abort(400, f"Missing one of the required parameters: {required_params}")
+    #
+    # ch = challenges.Challenge.get_by_id(obj_id, db_conn, with_tasks=True)
+    # if not ch:
+    #     abort(404, 'Challenge not found')
+    #
+    # task = next((t for t in ch['tasks'] if t['id'] == task_id), None)
+    # if task is None:
+    #     abort(404, 'Task not found in this challenge')
+    #
+    # if task_id not in ch['unlocked']:
+    #     abort(400, 'Task is locked yet')
+    # correct_answer = task.get('answer') or task.get('correct_option')
+    # success = correct_answer == str(answer)
+    # if success:
+    #     ch = challenges.Challenge.get_by_id(obj_id, db_conn)
+    #     if task['id'] not in ch.done:
+    #         ch.done.append(task['id'])
+    #         ch.update(db_conn, ['done'])
+
+    # return jsonify(success)
+
 
 @app.route("/upload", methods=['POST'])
 def handle_upload():
@@ -172,7 +302,7 @@ def handle_upload():
         filename = secure_filename(f.filename)
         encoded = Binary(f.read())
         res = db_conn.files.insert_one({'filename': filename, 'data': encoded})
-        return '/user_uploads/' + str(res.inserted_id)
+        return jsonify('/user_uploads/' + str(res.inserted_id))
     else:
         return abort(400, 'Must pass file in a query by key "file"')
 

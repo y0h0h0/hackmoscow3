@@ -20,6 +20,7 @@ def is_safe_for_upload(filename):
 
 
 def extract_args(args, keys):
+    args = args.copy()
     meta = {}
     res = [None for _ in range(len(keys))] + [meta]
     for k, v in args.items():

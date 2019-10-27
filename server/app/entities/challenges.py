@@ -5,6 +5,8 @@ from entities.tasks import Task, Path
 
 
 class Challenge:
+    arg_names = {'path', 'passphrase', 'done', 'unlocked'}
+
     def __init__(self, path, passphrase, done=None, unlocked=None, meta=None, _id=None):
         self.path = path
         self.passphrase = passphrase
@@ -14,7 +16,9 @@ class Challenge:
         self._id = _id
 
     def view(self):
-        return {'path': str(self.path), 'passphrase': self.passphrase, 'done': self.done, 'unlocked': self.unlocked,
+        return {'path': str(self.path), 'passphrase': self.passphrase,
+                'done': self.done,
+                'unlocked': self.unlocked,
                 'id': str(self._id), **self.meta}
 
     @staticmethod
@@ -37,10 +41,13 @@ class Challenge:
             t['unlocked'] = t['id'] in ch.unlocked
         res = {
             'id': str(ch._id),
-            'name': path.name,
+            'name': meta.get('name') or path.name,
+            'passphrase': ch.passphrase,
             'gift_description': meta.get('gift_description'),
             'gift_photo': meta.get('gift_photo'),
-            'tasks': tasks
+            'tasks': tasks,
+            'unlocked': ch.unlocked,
+            'done': ch.done
         }
         return res
 
@@ -54,5 +61,8 @@ class Challenge:
             'path': self.path, 'passphrase': self.passphrase, 'done': self.done, 'meta': self.meta})
         self._id = res.inserted_id
 
-    def update(self, db, field):
-        db.challenges.update_one({'_id': self._id}, {'$set': {field: self.__dict__[field]}})
+    def update(self, db, fields):
+        db.challenges.update_one({'_id': self._id}, {'$set': {field: self.__dict__[field] for field in fields}})
+
+    def mark_unlocked(self):
+        pass
