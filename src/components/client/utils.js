@@ -16,6 +16,7 @@ const showAlert = (type = 'ok', message = 'message', timing = 3500) => {
 	const notts = document.querySelector('.c-notifications');
 	const newMessage = document.createElement('div');
 
+	if(!notts) return false;
 	newMessage.innerHTML = message;
 	let className = '';
 	switch(type) {
