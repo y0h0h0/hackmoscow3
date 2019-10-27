@@ -97,6 +97,7 @@
       text-align: center;
       font-size: 50px;
       color:#ffc000;
+      animation: jumping 1s linear infinite;
     }
   }
 
@@ -186,7 +187,7 @@
     }
   }
 
-  .c-logout-cntr {
+  .c-freebtn-cntr {
     padding: 30px 10px 20px;
   }
 
