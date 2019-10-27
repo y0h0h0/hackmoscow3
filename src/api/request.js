@@ -12,6 +12,7 @@ export default ({
     method,
   };
   switch (method) {
+    case 'PATCH':
     case 'POST':
       // const fd = new FormData();
       // for (let key in data) {
@@ -27,6 +28,7 @@ export default ({
         });
       }
       break;
+    case 'DELETE':
     case 'GET':
       if (data && Object.keys(data).length) {
         const fd = [];

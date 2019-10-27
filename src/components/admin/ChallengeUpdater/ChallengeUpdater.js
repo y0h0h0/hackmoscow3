@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useEffect, useContext } from 'react';
 
 import { createQuest, updateQuest, getQuest } from 'api/quests';
-// import { createTask } from 'api/tasks';
+import { createTask } from 'api/tasks';
 
 import { AppContext } from 'containers/admin/Layout';
 
@@ -94,49 +94,52 @@ export default () => {
 
   const saveChallenge = () => {
     let newChallenges = [...(challenges || [])];
-    const newChallenge = {
-      ...draftChallenge,
-      tasks: tasks.map(({ id, ...task }) => task),
-    };
+    const {
+      tasks,
+      ...newChallenge
+    } = draftChallenge
     setLoading(true);
     if (!newChallenge.id) {
       createQuest(newChallenge).then((result) => {
-        setLoading(false);
         Object.assign(newChallenge, result);
-        // saveTasks(newChallenge.id).then(() => {
-        // });
-        setInitialChallenge(newChallenge);
-        setDraftChallenge({
-          force: true,
-          ...newChallenge,
+        saveTasks(newChallenge.id).then(() => {
+          setLoading(false);
+          setInitialChallenge(newChallenge);
+          setDraftChallenge({
+            force: true,
+            ...newChallenge,
+          });
+          newChallenges.push(newChallenge);
+          setState({
+            challenges: newChallenges,
+          });
         });
-        newChallenges.push(newChallenge);
       }).catch(() => {
         setLoading(false);
         reset();
       });;
     } else {
       updateQuest(newChallenge).then((result) => {
-        setLoading(false);
         Object.assign(newChallenge, result);
-        // saveTasks(newChallenge.id).then(() => {
-        // });
-        setInitialChallenge(newChallenge);
-        setDraftChallenge({
-          force: true,
-          ...newChallenge,
+        saveTasks(newChallenge.id).then(() => {
+          setLoading(false);
+          setInitialChallenge(newChallenge);
+          setDraftChallenge({
+            force: true,
+            ...newChallenge,
+          });
+          newChallenges = newChallenges.map(
+            (item) => item.id === newChallenge.id ? newChallenge : item,
+          );
+          setState({
+            challenges: newChallenges,
+          });
         });
-        newChallenges = newChallenges.map(
-          (item) => item.id === newChallenge.id ? newChallenge : item,
-        );
       }).catch(() => {
         setLoading(false);
         reset();
       });
     }
-    setState({
-      challenges: newChallenges.map((item) => ({ ...item })),
-    });
   }
   // useEffect(() => {
   //   if (draftChallenge && draftChallenge.id) {
@@ -158,28 +161,27 @@ export default () => {
     }
   }
 
-  const removeTask = ({ id }) => {
-    setTasks(tasks.filter((task) => task.id !== id).map((task, index) => ({
-      ...task,
-      index: index + 1,
-    })));
+  const removeTask = ({ key }) => {
+    setTasks(tasks.filter((task) => task.key !== key));
   }
 
-  // function saveTasks(challenge) {
-  //   return Promise.all(
-  //     tasks.map(({
-  //       id,
-  //       ...item
-  //     }) => createTask({
-  //       challenge,
-  //       ...item,
-  //     }))
-  //   ).then((result) => {
-  //     console.log(result)
-  //   }).catch(() => {
-  //     reset();
-  //   });
-  // }
+  function saveTasks(challenge) {
+    return Promise.all(
+      tasks
+        .filter((item) => !item.id)
+        .map((item) => createTask({
+          challenge,
+          ...item,
+        }))
+    ).then((newTasks) => {
+      setTasks(tasks.map((task) => ({
+        ...task,
+        ...(newTasks.find(({ key }) => key === task.key) || {}),
+      })));
+    }).catch(() => {
+      reset();
+    });
+  }
 
   function reset() {
     setLoading(false);
@@ -246,7 +248,32 @@ export default () => {
 
         <h5>Challenge reward</h5>
 
+        <div className="row">
+          <div className="col-6">
+            <div className="form-group">
+              <textarea
+                className="form-control"
+                placeholder="Reward description"
+                value={draftChallenge.gift_description || ''}
+                onChange={({ target }) =>
+                  setDraftChallenge({ gift_description: target.value })
+                }
+              />
+            </div>
+            <div className="form-group">
+              <input
+                className="form-control"
+                placeholder="Reward image"
+                value={draftChallenge.gift_photo || ''}
+                onChange={({ target }) =>
+                  setDraftChallenge({ gift_photo: target.value })
+                }
+              />
+            </div>
+          </div>
+        </div>
       </div>
+
       <div className="ChallengeUpdater__footer">
         <div className="row row--sm justify-content-end">
           <div className="col-auto">
